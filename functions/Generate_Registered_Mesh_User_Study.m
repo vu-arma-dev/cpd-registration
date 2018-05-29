@@ -15,7 +15,8 @@ switch phantomModelName
         curveFileName = 'curve_A_UserStudy';
         Apriori_Name= 'kidney_and_base_2mm_aligned.ply';
         Fiducial_with_PC = 'CT_KidneyA_fiducials';
-        Fiducial_target = 'FiducialRob_KidneyA';
+%         Fiducial_target = 'FiducialRob_KidneyA';
+        Fiducial_target = 'Fiducial_2018-05-01';
         LoadResultsFolder = [PC_path_UserStudy,'RegAprToCT\'];
         FIDUCIAL_path = [getenv('UDPREGJHU'),'\UserStudy_Data\FiducialLocations\'];
         PLY_path_Apriori = [getenv('UDPREGJHU'),'\PSM_Data\PLY\'];
@@ -62,7 +63,7 @@ stlwrite([output_path,meshFileName,'.stl'],ConnList_to_STL,...
     length(TR.ConnectivityList),3));
 %%  write curve to ".pcd" file
 %   cut off the beginning N_begin points and N_end points
-N_begin = 30;
+N_begin = 60;
 N_end = 0;
 curveReg_SI([1:N_begin,end-N_end:end],:) = [];
 curveReg_SI_Pt = pointCloud(curveReg_SI);

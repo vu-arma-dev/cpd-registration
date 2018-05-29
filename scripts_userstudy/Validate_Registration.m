@@ -43,4 +43,19 @@ end
 % TODO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cpd_dir=getenv('CPDREG');
 
+load([cpd_dir filesep 'userstudy_data' filesep 'Fiducial_2018-05-01'])
+% fiducial_Robot=FiducialPositions'*1000;
+fiducial_Robot=stlPoints;
+
+for i=1:6 %test each organ for funzies
+    load([cpd_dir filesep 'userstudy_data' filesep 'FiducialLocations' filesep 'FiducialLocations_' num2str(i)]);
+    fiducial_CT=FidLoc;
+    
+    [R,t] = rigidPointRegistration(fiducial_CT,fiducial_Robot);
+    % R*Fiducial_CT+t ~~ Fiducial_Robot
+    % save to file R and t
+    quat=rotm2quat(R(1:3,1:3));
+    errorMean(i)=mean(sqrt(sum((R*fiducial_CT+t - fiducial_Robot).^2)));
+end

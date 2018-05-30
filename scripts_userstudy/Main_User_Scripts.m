@@ -6,12 +6,9 @@ for i=[1,3,4]
     ArteryCentroid3D(labels{i},'Save',1);
 end
 
-
 %% Perform segmentation of sphere points and save mat file/pcd of spheres
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TODO
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i=[2,5,6]
     SpherePt3D(labels{i},'Save',1); %QUESTION: what are we saving? Center, closest on mesh? Closest to mesh on sphere?

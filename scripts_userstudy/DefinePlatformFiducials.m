@@ -58,6 +58,7 @@ while DefineNextPoint && idx<=4
     end
 end
 if SaveResult
+    %% Save the fiducial locations
     save_mat_path = ...
         [getenv('CATKIN_BASE'),filesep,...
         'src',filesep,'cpd-registration',filesep,'userstudy_data',filesep,'FiducialLocations'];
@@ -66,18 +67,20 @@ if SaveResult
     end
     save([save_mat_path,filesep,FiducialName],'FiducialPositions');
     fprintf('Fiducial Positions Saved\n');
+
+    %% Calculate and write the registration result to file
+    organFiducial=load([save_mat_path,filesep,...
+        'FiducialLocations_',num2str(organNumber)]);
+    [R,t] = rigidPointRegistration(organFiducial.FidLoc,FiducialPositions'*1000);
+    qOut=rotm2quat(R);
+    fileID = fopen([save_mat_path,filesep, 'organ_' num2str(organNumber) '_reg.txt'],'w');
+    fprintf(fileID,'Position (mm)\n');
+    fprintf(fileID,'%f %f %f\n',t);
+    fprintf(fileID,'Orientation (w x y z)\n');
+    fprintf(fileID,'%f %f %f %f',qOut);
+    fclose(fileID);
+
 end
-organFiducial=load([save_mat_path,filesep,...
-    'FiducialLocations_',num2str(organNumber)]);
-
-%% Write to file the registration result
-% [R,t]=rigidRegistration(organFiducial.FidLoc,FiducialPositions);
-% /userstudy_data/OrganRegistration/organ_i_reg.txt
-% Position
-% px py pz
-% Orientation
-% w x y z
-
 
 
 end

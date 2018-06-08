@@ -15,14 +15,14 @@ for i=[2,5,6]
 end
 
 %% Generate CPD registration of organs, save the data as a mat file
-for i=3:6
+for i=1:6
     APP_RegAprToCT(labels{i});
 end
 
 %% Plot Results of CPD registration to verify
 for i=1:6
-    load(['R:\Robots\CPD_Reg.git\userstudy_data\PointCloudData\RegAprToCT\Kidney_' labels{i} '_iter_100.mat'])
-    figure(i)
+    load(['R:\Robots\CPD_Reg.git\userstudy_data\PointCloudData\RegAprToCT\Kidney_' labels{i} '_iter_100_NoOpt.mat'])
+    figure(i+6)
     scatter3(ptCTScan.Location(:,1),ptCTScan.Location(:,2),ptCTScan.Location(:,3))
     hold on
     scatter3(T.Y(:,1),a.T.Y(:,2),T.Y(:,3));
@@ -37,7 +37,7 @@ end
 %% Test fiducial-based registration for registering the mesh/stl to robot data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TODO
+% TODO - not finished
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cpd_dir=getenv('CPDREG');

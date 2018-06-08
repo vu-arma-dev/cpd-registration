@@ -49,7 +49,7 @@ if ~exist(SaveResultsFolder,'dir')
 end
 k = 100;
 [T,C]= deformReg(ptCTScan.Location,AprioriModel,'max iter',k);
-save([SaveResultsFolder,'Kidney_',phantomModelName ,'_iter_',num2str(k)],...
+save([SaveResultsFolder,'Kidney_',phantomModelName ,'_iter_',num2str(k),'_NoOpt'],...
     'T','C','ptCTScan','ptApriori');
 close all;
 end

@@ -3,17 +3,17 @@ function [Transform, C] = deformReg(X,Y,varargin)
 %   Default options
 opt.method='nonrigid_lowrank'; % use nonrigid registration
 % opt.method='rigid'; % use nonrigid registration
-opt.beta=6;            			% the width of Gaussian kernel (smoothness)
-opt.lambda=3;          			% regularization weight
+% opt.beta=6;            			% the width of Gaussian kernel (smoothness)
+% opt.lambda=3;          			% regularization weight
 
-opt.viz=1;              % show every iteration
-opt.outliers=0;       % noise weight
-opt.fgt=0;              % do not use FGT (default)
-opt.normalize=1;        % normalize to unit variance and zero mean before registering (default)
-opt.corresp=1;          % compute correspondence vector at the end of registration (not being estimated by default)
-
-opt.max_it=100;         % max number of iterations
-opt.tol=1e-10;          % tolerance
+% opt.viz=1;              % show every iteration
+% opt.outliers=0;       % noise weight
+% opt.fgt=0;              % do not use FGT (default)
+% opt.normalize=1;        % normalize to unit variance and zero mean before registering (default)
+% opt.corresp=1;          % compute correspondence vector at the end of registration (not being estimated by default)
+% 
+% opt.max_it=100;         % max number of iterations
+% opt.tol=1e-10;          % tolerance
 %%  parsing options
 if numel(varargin)
     for i = 1:2:numel(varargin)

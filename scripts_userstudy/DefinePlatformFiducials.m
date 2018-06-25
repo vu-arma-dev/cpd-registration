@@ -11,18 +11,18 @@ function DefinePlatformFiducials(FiducialName)
 %%  Input
 %   MapName  -    The name to give for this map
 if nargin<1
-    FiducialName = input('Give fiducial name name:(enter to be default "FiducialRobot")','s');
-    if isempty(FiducialName)
+%     FiducialName = input('Give fiducial name name:(enter to be default "FiducialRobot")','s');
+%     if isempty(FiducialName)
         FiducialName = 'FiducialRobot';
-    end
+%     end
 end
-while startsWith(FiducialName,'FiducialLocations_')
-    fprintf('You cannot use the name ''FiducialLocations_#'' (that is used for organs) \n');
-    FiducialName = input('Give fiducial name name:(enter to be default "FiducialRobot")','s');
-    if isempty(FiducialName)
-        FiducialName = 'FiducialRobot';
-    end
-end
+% while startsWith(FiducialName,'FiducialLocations_')
+%     fprintf('You cannot use the name ''FiducialLocations_#'' (that is used for organs) \n');
+%     FiducialName = input('Give fiducial name:(enter to be default "FiducialRobot")','s');
+%     if isempty(FiducialName)
+%         FiducialName = 'FiducialRobot';
+%     end
+% end
 % dvrk_init_continous_palp;
 start_matlab_ros;
 setenv('CATKIN_BASE','/home/arma/catkin_ws');
@@ -32,11 +32,11 @@ DefineNextPoint = 1;
 SaveResult = 1;
 organNumber=-1;
 while organNumber>6 || organNumber <1
-    clc
     fprintf('Which Organ are you registering (use numbers 1-6 not letters A-F)?\n');
     organNumber = input('Organ Number: ');
 end
 clc;
+%%
 fprintf('Manually move the PSM to a point and \n');
 fprintf('[empty] - save this point \n');
 fprintf('[q] - quit without saving previous points \n');
@@ -72,12 +72,18 @@ if SaveResult
     organFiducial=load([save_mat_path,filesep,...
         'FiducialLocations_',num2str(organNumber)]);
     [R,t] = rigidPointRegistration(organFiducial.FidLoc,FiducialPositions'*1000);
+    t=t/1000; %convert from mm to meter
     qOut=rotm2quat(R);
-    fileID = fopen([save_mat_path,filesep, 'organ_' num2str(organNumber) '_reg.txt'],'w');
-    fprintf(fileID,'Position (mm)\n');
+    qOutOtherFormat=[qOut(2:4),qOut(1)];
+    
+    save_reg_path = ...
+        [getenv('CATKIN_BASE'),filesep,...
+        'src',filesep,'cisst-saw-nri',filesep,'nri-ros',filesep,'dvrk_nri_robot',filesep,'data',filesep,'user_study'];
+    fileID = fopen([save_reg_path,filesep,'user_study',filesep,'PSM2PhantomReg_UserStudy.txt'],'w');
+    fprintf(fileID,'Position\n');
     fprintf(fileID,'%f %f %f\n',t);
-    fprintf(fileID,'Orientation (w x y z)\n');
-    fprintf(fileID,'%f %f %f %f',qOut);
+    fprintf(fileID,'Quaternion\n');
+    fprintf(fileID,'%f %f %f %f',qOutOtherFormat);
     fclose(fileID);
 
 end

@@ -35,7 +35,8 @@ switch kidneyLetter
 end
 FolderName='R:\Robots\CPD_Reg.git\userstudy_data\STL\';
 [F,V]=stlread([FolderName stlName]);
-V=V';
+V=V'/1000;
+
 
 %%
 % Use PCA/SVD to fit a line for V, after demeaning
@@ -89,7 +90,7 @@ if plotOption
     figure
     plot3(centerArtery(1,:),centerArtery(2,:),centerArtery(3,:),'kx')
     hold on
-    plot3(ptOutput(1,:),ptOutput(2,:),ptOutput(3,:),'r.')
+    plot3(ptOutput(1,:),ptOutput(2,:),ptOutput(3,:),'r')
     axis([ax1.XLim, ax1.YLim, ax1.ZLim])
 end
 if saveData

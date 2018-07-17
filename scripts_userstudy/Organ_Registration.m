@@ -1,4 +1,6 @@
-% This is a function to register the fiducial markers of the kidney markers
+% Segment the fiducial markers of the organs for the NRI User study
+% Based on the CT scans, it finds the location of the fiducials in the CT
+% scanned data and saves them to the userstudy_data folder
 clear
 close all
 clc
@@ -24,13 +26,16 @@ for i=1:5
 end
 
 %%
-epsilon=0.5;
-MinPts=10;
+load('Organ_Registration_Workspace');
 
-for i=1:6
-    X=double(fidsCloud{i}.Location);
-    IDX{i}=DBSCAN(X,epsilon,MinPts);
-end
+% epsilon=0.5;
+% MinPts=10;
+% 
+% for i=1:6
+%     X=double(fidsCloud{i}.Location);
+%     IDX{i}=DBSCAN(X,epsilon,MinPts);
+% end
+
 
 %%
 
@@ -105,6 +110,8 @@ D=[5.693 -126.3 -32.64];
 centerPoint{6}(:,11)=C';
 centerPoint{6}(:,12)=D';
 %%
+% save('Organ_Registration_Workspace'); %Also uncomment out IDX definition above if saving
+load('Organ_Registration_Workspace');
 ABCDMap=[3 9 12 6
          11 12 10 5
          3 9 12 6
@@ -119,17 +126,23 @@ probeBall_R = 6.35/2; % unit in [mm]
 % N_Fiducials = length(centers);
 % Fiducial_LPI_coordinates = zeros(N_Fiducials,3);
 
-% offset_dir = normr(centers(i,:)-pivot_tips(i,:));
-%     Fiducial_LPI_coordinates(i,:) = ...
-%         pivot_tips(i,:) + ...
-%         (probeBall_R/sin(HalfCounterSinkAngle))*offset_dir;
-% end
-
 for i=1:6
     ABCD{i}=centerPoint{i}(:,ABCDMap(i,:));
     FidLoc=ABCD{i};
-    offset_dir=fitPlane(FidLoc);
-    FidLoc=FidLoc-offset_dir*(probeBall_R/sin(HalfCounterSinkAngle));
+    offset_dir=fitPlane(FidLoc)
+    ba=FidLoc(:,1)-FidLoc(:,2);
+    bc=FidLoc(:,3)-FidLoc(:,2);
+    vertical=cross(normc(ba),normc(bc));
+    flip=sign(dot(offset_dir,vertical))
+    offset_dir=offset_dir*flip;
+    
+    FidLoc=FidLoc+offset_dir*(probeBall_R/sin(HalfCounterSinkAngle));
+    figure(i)
+    plot3(FidLoc(1,:),FidLoc(2,:),FidLoc(3,:),'bo')
     save(['../userstudy_data/FiducialLocations/FiducialLocations_' num2str(i)],'FidLoc');
 end
-     
+
+
+
+
+

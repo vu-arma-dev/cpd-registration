@@ -4,6 +4,7 @@ if nargin<1
     kidneyLetter='A';
 end
 plotOption=0;
+projectOnSurface=1;
 N=200;
 cutoff=[5;10];
 smoothParam=0.01;
@@ -22,21 +23,25 @@ if numel(varargin)
             smoothParam = propertyValue;
         elseif strcmpi(propertyName,'Save') % Between 0 and 1, 0 to save output
             saveData = propertyValue;
+        elseif strcmpi(propertyName,'projectOnSurface') % 0 or 1, project onto mesh using mean organ normal
+            projectOnSurface = propertyValue;
         end
     end
 end
 switch kidneyLetter
     case 'A'
         stlName='KidneyA_Artery_reduced.stl';
+        orgName='Kidney_A_UserStudy.stl';
     case 'C'
         stlName='KidneyC_Artery_reduced.stl';
+        orgName='Kidney_C_UserStudy.stl';
     case 'D'
         stlName='KidneyD_Artery_reduced.stl';
+        orgName='Kidney_D_UserStudy.stl';
 end
 FolderName='R:\Robots\CPD_Reg.git\userstudy_data\STL\';
 [F,V]=stlread([FolderName stlName]);
 V=V'/1000;
-
 
 %%
 % Use PCA/SVD to fit a line for V, after demeaning
@@ -57,16 +62,16 @@ lineDistance=lineDistance/max(lineDistance);
 
 % From the "beginning" of that line to the "end" of that line, split into N chunks.
 % figure
-fitPlane.n=normc(lineVec);
+bestFitPlane.n=normc(lineVec);
 for i=1:N
     relevantLines=Vlinear(:,lineDistance<i/N & lineDistance >= (i-1)/N);
     relevantV=Vdemean(:,lineDistance<i/N & lineDistance >= (i-1)/N);
     %     Find the center of each chunk
-    fitPlane.p=relevantV(:,1);
-    planeData=proj_onto_a_plane(fitPlane,relevantV)';
+    bestFitPlane.p=relevantV(:,1);
+    planeData=proj_onto_a_plane(bestFitPlane,relevantV)';
     centerArtery(:,i)=mean(planeData,2);
-%     plot3(relevantV(1,:),relevantV(2,:),relevantV(3,:))
-%     hold on
+    %     plot3(relevantV(1,:),relevantV(2,:),relevantV(3,:))
+    %     hold on
 end
 % Fit a smoothed spline to the data
 p = csaps(1:length(centerArtery),centerArtery,smoothParam);
@@ -82,6 +87,28 @@ endI=N-cutEnd;
 
 ptOutput=smoothed(:,beginI:endI);
 
+if projectOnSurface
+    [Forg,Vorg]=stlread(orgName);
+    [n,~]=fitPlane(Vorg');
+    P1=Vorg(Forg(:,1),:);
+    P2=Vorg(Forg(:,2),:);
+    P3=Vorg(Forg(:,3),:);
+    intersect=zeros(size(P1,1),1);
+    xhist=zeros(size(ptOutput,2),3);
+    for i=1:size(ptOutput,2)
+        orig=ptOutput(1:3,i)';
+        dir=-n'*.01;
+        [intersecti,~,~,~,xcoor] = TriangleRayIntersection(orig,dir, P1,P2,P3,'lineType','line','border','inclusive','eps',1e-8);
+        intersect = intersect | intersecti;
+        
+        if find(intersecti)
+            xhist(i,:)=xcoor(intersecti,:);
+        end
+    end
+    xhist=xhist((any(xhist,2)),:);        
+    ptOutput=xhist';
+end
+
 if plotOption
     % Plot the original artery and the smoothed output
     figure
@@ -92,11 +119,17 @@ if plotOption
     hold on
     plot3(ptOutput(1,:),ptOutput(2,:),ptOutput(3,:),'r')
     axis([ax1.XLim, ax1.YLim, ax1.ZLim])
+    
+    if projectOnSurface
+        trisurf(Forg,Vorg(:,1),Vorg(:,2),Vorg(:,3), intersect*1.0,'FaceAlpha', 0.9)
+        plot3(xhist(:,1),xhist(:,2),xhist(:,3),'kx');
+    end
 end
 if saveData
-    save(['../userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts'],'ptOutput');
+    cpdDir=getenv('CPDREG');
+    save([cpdDir filesep 'userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts'],'ptOutput');
     cloud=pointCloud(ptOutput');
-    pcwrite(cloud,['../userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts.ply'],'Encoding','ascii');
-    pcwrite(cloud,['../userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts.pcd'],'Encoding','ascii');
+    pcwrite(cloud,[cpdDir filesep 'userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts.ply'],'Encoding','ascii');
+    pcwrite(cloud,[cpdDir filesep 'userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts.pcd'],'Encoding','ascii');
 end
 end

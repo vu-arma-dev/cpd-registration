@@ -3,7 +3,7 @@ labels={'A','B','C','D','E','F'};
 
 %% Perform segmentation of artery points and save mat file/pcd of artery curves
 for i=[1,3,4]
-    ArteryCentroid3D(labels{i},'Save',1);
+    ArteryCentroid3D(labels{i},'Save',0,'projectOnSurface',1,'Plot',1);
 end
 
 %% Perform segmentation of sphere points and save mat file/pcd of spheres
@@ -11,7 +11,7 @@ end
 % TODO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for i=[2,5,6]
-    SpherePt3D(labels{i},'Save',1); %QUESTION: what are we saving? Center, closest on mesh? Closest to mesh on sphere?
+    SpherePt3D(labels{i},'Save',1);
 end
 
 %% Generate CPD registration of organs, save the data as a mat file

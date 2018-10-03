@@ -21,7 +21,7 @@ if numel(varargin)
             cutoff = propertyValue;
         elseif strcmp(propertyName,'Spline Smooth') % Between 0 and 1, 0 is smoother
             smoothParam = propertyValue;
-        elseif strcmpi(propertyName,'Save') % Between 0 and 1, 0 to save output
+        elseif strcmpi(propertyName,'Save') % 0 or 1, 1 to save output
             saveData = propertyValue;
         elseif strcmpi(propertyName,'projectOnSurface') % 0 or 1, project onto mesh using mean organ normal
             projectOnSurface = propertyValue;
@@ -132,4 +132,5 @@ if saveData
     pcwrite(cloud,[cpdDir filesep 'userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts.ply'],'Encoding','ascii');
     pcwrite(cloud,[cpdDir filesep 'userstudy_data/PLY/Kidney_' num2str(kidneyLetter) '_Artery_Pts.pcd'],'Encoding','ascii');
 end
+
 end

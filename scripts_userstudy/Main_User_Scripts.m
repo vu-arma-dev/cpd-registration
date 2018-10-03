@@ -10,9 +10,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TODO
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-for i=[2,5,6]
-    SpherePt3D(labels{i},'Save',1);
+for i=[2,6]
+    SpherePt3D(labels{i},'Save',0,'projectMethod','closest');
 end
+i=5;
+SpherePt3D(labels{i},'Save',1,'projectMethod','organ');
 
 %% Generate CPD registration of organs, save the data as a mat file
 for i=1:6

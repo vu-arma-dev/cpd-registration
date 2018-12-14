@@ -20,7 +20,7 @@ if numel(varargin)
             projectMethod = propertyValue;
             % Options:
             % 'z' : project vertically in the z direction
-            % 'organ' : project in the average norm of the
+            % 'organ' : project in the average norm of the organ
             % 'closest' : find the closest point on the mesh
         end
     end
@@ -36,54 +36,54 @@ switch kidneyLetter
         stlName='KidneyF_Spheres_reduced.stl';
         orgName='Kidney_F_UserStudy.stl';
 end
+if kidneyLetter >=10 && kidneyLetter<=22
+    orgNum = num2str(kidneyLetter);
+    stlName = ['Sphere' orgNum '_clean.stl'];    
+    orgName = ['Kidney_' orgNum '_UserStudy.stl'];
+end
 FolderName='R:\Robots\CPD_Reg.git\userstudy_data\STL\';
 [F,V]=stlread([FolderName stlName]);
 V=V'/1000;
 
-index=kmeans(V',2);
-s1=index==1;
-s2=index==2;
 
-ball1=V(:,s1);
-ball2=V(:,s2);
-% plot3(ball1(1,:),ball1(2,:),ball1(3,:))
-% hold on;plot3(ball2(1,:),ball2(2,:),ball2(3,:))
-
+if kidneyLetter>=20 && kidneyLetter <=22
+    Nball=3;
+else
+    Nball=2;
+end
+index=kmeans(V',Nball);
+for ii=1:Nball
+    sIndex{ii}=index==ii;
+    balls{ii}=V(:,sIndex{ii});
+end
 
 %%
-% Find the center of the sphere
-centerV=mean(V,2);
+% Read the organ
 FolderName='R:\Robots\CPD_Reg.git\userstudy_data\PointCloudData\OutputMesh\';
 [Forg,Vorg]=stlread([FolderName orgName]);
 P1=Vorg(Forg(:,1),:);
 P2=Vorg(Forg(:,2),:);
 P3=Vorg(Forg(:,3),:);
 intersect=zeros(size(P1,1),1);
-xhist=zeros(1,3);
 
 switch projectMethod
     case 'z'
-        ballpt1=mean(ball1,2);
-        dir=[0;0;1];
         
-        [intersect,~,~,~,xcoor] = TriangleRayIntersection(ballpt1,dir, P1,P2,P3,'lineType','line','border','inclusive','eps',1e-8);
-        ptOutput(:,1)=xcoor(intersect,:)';
-        
-        ballpt2=mean(ball2,2);
-        [intersect,~,~,~,xcoor] = TriangleRayIntersection(ballpt2,dir, P1,P2,P3,'lineType','line','border','inclusive','eps',1e-8);
-        ptOutput(:,2)=xcoor(intersect,:)';
+        for jj=1:Nball
+            ballpt{jj}=mean(balls{jj},2);
+            dir=[0;0;1];
+            [intersect,~,~,~,xcoor] = TriangleRayIntersection(ballpt{jj},dir, P1,P2,P3,'lineType','line','border','inclusive','eps',1e-8);
+            ptOutput(:,jj)=xcoor(intersect,:)';
+        end
         
     case 'organ'
-        ballpt1=mean(ball1,2);
         [n,~]=fitPlane(Vorg');
         dir=n;
-        
-        [intersect,~,~,~,xcoor] = TriangleRayIntersection(ballpt1,dir, P1,P2,P3,'lineType','line','border','inclusive','eps',1e-8);
-        ptOutput(:,1)=xcoor(intersect,:)';
-        
-        ballpt2=mean(ball2,2);
-        [intersect,~,~,~,xcoor] = TriangleRayIntersection(ballpt2,dir, P1,P2,P3,'lineType','line','border','inclusive','eps',1e-8);
-        ptOutput(:,2)=xcoor(intersect,:)';
+        for jj=1:Nball
+            ballpt{jj}=mean(balls{jj},2);
+            [intersect,~,~,~,xcoor] = TriangleRayIntersection(ballpt{jj},dir, P1,P2,P3,'lineType','line','border','inclusive','eps',1e-8);
+            ptOutput(:,jj)=xcoor(intersect,:)';
+        end
         
     case 'closest'
         % Find the distance between each point on the sphere and the mesh,
@@ -91,16 +91,12 @@ switch projectMethod
         upsampling=1;
         
         P = upsamplemesh(Forg,Vorg,upsampling);
-        [k,d] = dsearchn(P,ball1');
-        [~,i]=min(d);
-        ptOutput(:,1)=P(k(i),:);
-        ballpt1=ball1(:,i);
-        
-        [k,d] = dsearchn(P,ball2');
-        [~,i]=min(d);
-        ptOutput(:,2)=P(k(i),:);
-        ballpt2=ball2(:,i);
-        
+        for jj=1:Nball
+            [k,d] = dsearchn(P,balls{jj}');
+            [~,i]=min(d);
+            ptOutput(:,jj)=P(k(i),:);
+            ballpt{jj}=mean(balls{jj},2);
+        end        
 end
 
 if plotOption
@@ -108,10 +104,9 @@ if plotOption
     figure
     trisurf(Forg,Vorg(:,1),Vorg(:,2),Vorg(:,3), intersect*1.0,'FaceAlpha', 0.9)
     hold on
-    plot3(ballpt1(1),ballpt1(2),ballpt1(3),'yo')
-    plot3(ballpt2(1),ballpt2(2),ballpt2(3),'yo')
-%     plot3(ball1(1,:),ball1(2,:),ball1(3,:))
-%     plot3(ball2(1,:),ball2(2,:),ball2(3,:))
+    for jj=1:Nball
+        plot3(ballpt{jj}(1),ballpt{jj}(2),ballpt{jj}(3),'yo')
+    end
     plot3(ptOutput(1,:),ptOutput(2,:),ptOutput(3,:),'rx')
 end
 

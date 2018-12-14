@@ -12,8 +12,8 @@ PLY_path_Apriori = [cpdBasePath filesep 'PSM_Data' filesep 'PLY' filesep];
 Apriori_Name= 'kidney_and_base_2mm_aligned.ply';
 
 flipping_norms='yes';
-RegResultName =[ 'Kidney_' phantomModelName '_iter_100_NoOpt'];
-meshFileName = ['Kidney_' phantomModelName '_UserStudy'];
+RegResultName =[ 'Kidney_' num2str(phantomModelName) '_iter_100_NoOpt'];
+meshFileName = ['Kidney_' num2str(phantomModelName) '_UserStudy'];
 %%  Loading the results
 LoadData = load([LoadResultsFolder,RegResultName]);
 T = LoadData.T;

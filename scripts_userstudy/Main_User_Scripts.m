@@ -20,14 +20,13 @@ SpherePt3D(labels{i},'Save',1,'projectMethod','organ');
 for i=1:6
     APP_RegAprToCT(labels{i});
 end
-
 %% Plot Results of CPD registration to verify
 for i=1:6
     load(['R:\Robots\CPD_Reg.git\userstudy_data\PointCloudData\RegAprToCT\Kidney_' labels{i} '_iter_100_NoOpt.mat'])
     figure(i+6)
     scatter3(ptCTScan.Location(:,1),ptCTScan.Location(:,2),ptCTScan.Location(:,3))
     hold on
-    scatter3(T.Y(:,1),a.T.Y(:,2),T.Y(:,3));
+    scatter3(T.Y(:,1),T.Y(:,2),T.Y(:,3));
     axis equal
 end
 
@@ -36,12 +35,10 @@ for i=1:6
     Generate_Mesh_User_Study(labels{i});
 end
 
+%% Segment/save fiducial locations
+% Organ_Registration
+
 %% Test fiducial-based registration for registering the mesh/stl to robot data
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TODO - not finished
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cpd_dir=getenv('CPDREG');
 
 load([cpd_dir filesep 'userstudy_data' filesep 'Fiducial_2018-05-01'])

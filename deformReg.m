@@ -1,7 +1,7 @@
 function [Transform, C] = deformReg(X,Y,varargin)
 %%  Deformable registration
 %   Default options
-opt.method='nonrigid_lowrank'; % use nonrigid registration
+opt.method='nonrigid'; % use nonrigid registration
 % opt.method='rigid'; % use nonrigid registration
 % opt.beta=6;            			% the width of Gaussian kernel (smoothness)
 % opt.lambda=3;          			% regularization weight

@@ -2,7 +2,8 @@ function APP_RegAprToCT(phantomModelName)
 %%  Register the Apriori model to the CT scan data
 %   By Long Wang, 2018/4/4
 if nargin<1
-    phantomModelName = 'A';
+%     phantomModelName = 'A';
+    phantomModelName = 10;
 end
 switch phantomModelName
     case 'A'
@@ -17,6 +18,10 @@ switch phantomModelName
         CT_Scan_PtName = 'KidneyE_TopOnly_Reduced.stl';
     case 'F'
         CT_Scan_PtName = 'KidneyF_TopOnly_Reduced.stl';
+end
+% Kidney10_Top.stl to Kidney22_Top.stl
+if phantomModelName>=10&& phantomModelName<=22
+    CT_Scan_PtName = ['Kidney' num2str(phantomModelName) '_Top.stl'];
 end
 %%  Load data files
 % Setup_Dir_DeformableReg;
@@ -49,7 +54,7 @@ if ~exist(SaveResultsFolder,'dir')
 end
 k = 100;
 [T,C]= deformReg(ptCTScan.Location,AprioriModel,'max iter',k);
-save([SaveResultsFolder,'Kidney_',phantomModelName ,'_iter_',num2str(k),'_NoOpt'],...
+save([SaveResultsFolder,'Kidney_',num2str(phantomModelName) ,'_iter_',num2str(k),'_NoOpt'],...
     'T','C','ptCTScan','ptApriori');
 close all;
 end

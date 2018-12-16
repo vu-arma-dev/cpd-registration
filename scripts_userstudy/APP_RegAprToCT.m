@@ -1,4 +1,4 @@
-function APP_RegAprToCT(phantomModelName)
+function APP_RegAprToCT(phantomModelName,CPDDir)
 %%  Register the Apriori model to the CT scan data
 %   By Long Wang, 2018/4/4
 if nargin<1
@@ -21,13 +21,12 @@ switch phantomModelName
 end
 % Kidney10_Top.stl to Kidney22_Top.stl
 if phantomModelName>=10&& phantomModelName<=22
-    CT_Scan_PtName = ['Kidney' num2str(phantomModelName) '_Top.stl'];
+    CT_Scan_PtName = ['Kidney' num2str(phantomModelName) '_top.stl'];
 end
 %%  Load data files
 % Setup_Dir_DeformableReg;
 %   load the A-priori
-CPDDir=getenv('CPDREG');
-PLY_path_PSM = [CPDDir filesep 'PSM_Data' filesep 'PLY' filesep];
+PLY_path_PSM = [CPDDir filesep 'psm_data' filesep 'PLY' filesep];
 Apriori_Name= 'kidney_and_base_2mm_aligned.ply';
 ptApriori = pcread([PLY_path_PSM,Apriori_Name]);
 %  rotate the apriori to match the exploration better
@@ -41,18 +40,18 @@ A = [R2*R1,zeros(3,1); ...
 tform = affine3d(A);
 ptApriori = pctransform(ptApriori,tform);
 %   load the CT-scan
-STL_path_CT = [CPDDir filesep 'UserStudy_Data' filesep 'STL' filesep];
+STL_path_CT = [CPDDir filesep 'userstudy_data' filesep 'STL' filesep];
 [F,V] = stlread([STL_path_CT,CT_Scan_PtName]);
 ptCTScan = pointCloud(V);
 ptCTScan = pcdownsample(ptCTScan,'gridAverage',1);
 %% register
-PC_path_CT = [CPDDir filesep 'UserStudy_Data' filesep 'PointCloudData' filesep];
+PC_path_CT = [CPDDir filesep 'userstudy_data' filesep 'PointCloudData' filesep];
 SaveResultsFolder = [PC_path_CT,'RegAprToCT' filesep];
 AprioriModel = ptApriori.Location;
 if ~exist(SaveResultsFolder,'dir')
     mkdir(SaveResultsFolder);
 end
-k = 100;
+k = 1;
 [T,C]= deformReg(ptCTScan.Location,AprioriModel,'max iter',k);
 save([SaveResultsFolder,'Kidney_',num2str(phantomModelName) ,'_iter_',num2str(k),'_NoOpt'],...
     'T','C','ptCTScan','ptApriori');

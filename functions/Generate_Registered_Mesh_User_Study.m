@@ -6,7 +6,7 @@ if nargin<1
     phantomModelName = 'A';
 end
 %%  Path setting
-PC_path_UserStudy = [getenv('UDPREGJHU'),'\UserStudy_Data\PointCloudData\'];
+PC_path_UserStudy = [getenv('cpdreg'),filesep 'userstudy_data' filesep 'PointCloudData' filesep];
 switch phantomModelName
     case 'A'
         RegResultName = 'iter_100';
@@ -15,11 +15,10 @@ switch phantomModelName
         curveFileName = 'curve_A_UserStudy';
         Apriori_Name= 'kidney_and_base_2mm_aligned.ply';
         Fiducial_with_PC = 'CT_KidneyA_fiducials';
-%         Fiducial_target = 'FiducialRob_KidneyA';
         Fiducial_target = 'Fiducial_2018-05-01';
-        LoadResultsFolder = [PC_path_UserStudy,'RegAprToCT\'];
-        FIDUCIAL_path = [getenv('UDPREGJHU'),'\UserStudy_Data\FiducialLocations\'];
-        PLY_path_Apriori = [getenv('UDPREGJHU'),'\PSM_Data\PLY\'];
+        LoadResultsFolder = [PC_path_UserStudy,'RegAprToCT' filesep];
+        FIDUCIAL_path = [getenv('cpdreg'),filesep 'userstudy_data' filesep 'FiducialLocations' filesep];
+        PLY_path_Apriori = [getenv('cpdreg'), filesep 'psm_data' filesep 'PLY' filesep];
 end
 
 %%  Loading the results
@@ -42,7 +41,7 @@ curveReg_SI = curveReg/1000;
 ptApriori = pcread([PLY_path_Apriori,Apriori_Name]);
 DT_Apriori = delaunayTriangulation(double(ptApriori.Location(:,1:2)));
 TR = triangulation(DT_Apriori.ConnectivityList,meshReg_SI);
-output_path = [getenv('UDPREGJHU'),'\OutputMesh\'];
+output_path = [getenv('cpdreg'), 'OutputMesh' filesep];
 if exist(output_path,'dir')
     mkdir(output_path);
 end
@@ -63,7 +62,7 @@ stlwrite([output_path,meshFileName,'.stl'],ConnList_to_STL,...
     length(TR.ConnectivityList),3));
 %%  write curve to ".pcd" file
 %   cut off the beginning N_begin points and N_end points
-N_begin = 60;
+N_begin = 50;
 N_end = 0;
 curveReg_SI([1:N_begin,end-N_end:end],:) = [];
 curveReg_SI_Pt = pointCloud(curveReg_SI);

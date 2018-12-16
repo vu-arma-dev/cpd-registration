@@ -5,7 +5,7 @@
 CPD_DIR=fileparts(fileparts(mfilename('fullpath')));
 addpath([CPD_DIR filesep 'functions']);
 
-oList=10;%[10:12,20:22];
+oList=[10:12,20:22];
 
 %% Generate CPD registration of new organs, save the data as a mat file
 for jj=oList
@@ -18,6 +18,7 @@ for jj=oList
     figure
     scatter3(ptCTScan.Location(:,1),ptCTScan.Location(:,2),ptCTScan.Location(:,3))
     figure
+% hold on
     scatter3(T.Y(:,1),T.Y(:,2),T.Y(:,3));
     axis equal
 end
@@ -29,7 +30,7 @@ for jj=oList
 end
 
 %% Save fiducial locations
-% Organ_Registration_New %TODO: add FidA.ply to each kidney output folder in git, only saved at VU ARMAlab host - output is ok, saved in FiducialLocations
+Organ_Registration_New %TODO: add FidA.ply to each kidney output folder in git, only saved at VU ARMAlab host - output is ok, saved in FiducialLocations
 
 %% Test Organ Registration with robot data
 % TODO

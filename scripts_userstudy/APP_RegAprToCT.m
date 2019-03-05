@@ -23,7 +23,7 @@ end
 if phantomModelName>=10&& phantomModelName<=22
     CT_Scan_PtName = ['Kidney' num2str(phantomModelName) '_top.stl'];
     R1 = axang2rotm([1 0 0 -pi/2-pi/5]);
-    R2 = axang2rotm([0 0 1 pi/4]);
+    R2 = axang2rotm([0 1 0 -pi/8])*axang2rotm([0 0 1 pi/8]);
 else
     R1 = axang2rotm([0 0 1 pi]);
     R2 = axang2rotm([1 0 0 pi/4]);
@@ -41,22 +41,14 @@ ptApriori = pcread([PLY_path_PSM,Apriori_Name]);
 A = [R2*R1,zeros(3,1); ...
      0 0 0 1];
 tform = affine3d(A);
-% figure(1)
-% pcshow(ptApriori)
-% xlabel('x');ylabel('y');zlabel('z')
+
 ptApriori = pctransform(ptApriori,tform);
 %   load the CT-scan
 STL_path_CT = [CPDDir filesep 'userstudy_data' filesep 'STL' filesep];
 [F,V] = stlread([STL_path_CT,CT_Scan_PtName]);
 ptCTScan = pointCloud(V);
 ptCTScan = pcdownsample(ptCTScan,'gridAverage',1);
-% 
-% figure(2)
-% pcshow(ptCTScan)
-% xlabel('x');ylabel('y');zlabel('z')
-% figure(3)
-% pcshow(ptApriori)
-% xlabel('x');ylabel('y');zlabel('z')
+
 %% register
 PC_path_CT = [CPDDir filesep 'userstudy_data' filesep 'PointCloudData' filesep];
 SaveResultsFolder = [PC_path_CT,'RegAprToCT' filesep];

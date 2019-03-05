@@ -17,8 +17,8 @@ for jj=oList
     load([fileparts(fileparts(mfilename('fullpath'))) filesep 'userstudy_data' filesep 'PointCloudData' filesep 'RegAprToCT' filesep 'Kidney_' num2str(jj) '_iter_100_NoOpt.mat'])
     figure
     scatter3(ptCTScan.Location(:,1),ptCTScan.Location(:,2),ptCTScan.Location(:,3))
-    figure
-% hold on
+%     figure
+    hold on
     scatter3(T.Y(:,1),T.Y(:,2),T.Y(:,3));
     axis equal
 end

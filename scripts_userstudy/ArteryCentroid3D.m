@@ -113,17 +113,17 @@ if plotOption
     % Plot the original artery and the smoothed output
     figure
     plot3(V(1,:),V(2,:),V(3,:));
-    ax1=gca;
-    figure
+%     ax1=gca;
+%     figure
     plot3(centerArtery(1,:),centerArtery(2,:),centerArtery(3,:),'kx')
     hold on
     plot3(ptOutput(1,:),ptOutput(2,:),ptOutput(3,:),'r')
-    axis([ax1.XLim, ax1.YLim, ax1.ZLim])
+%     axis([ax1.XLim, ax1.YLim, ax1.ZLim])
     
-    if projectOnSurface
-        trisurf(Forg,Vorg(:,1),Vorg(:,2),Vorg(:,3), intersect*1.0,'FaceAlpha', 0.9)
-        plot3(xhist(:,1),xhist(:,2),xhist(:,3),'kx');
-    end
+%     if projectOnSurface
+%         trisurf(Forg,Vorg(:,1),Vorg(:,2),Vorg(:,3), intersect*1.0,'FaceAlpha', 0.9)
+%         plot3(xhist(:,1),xhist(:,2),xhist(:,3),'kx');
+%     end
 end
 if saveData
     cpdDir=getenv('CPDREG');

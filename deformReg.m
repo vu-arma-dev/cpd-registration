@@ -14,6 +14,9 @@ opt.method='nonrigid'; % use nonrigid registration
 % 
 % opt.max_it=100;         % max number of iterations
 % opt.tol=1e-10;          % tolerance
+
+opt.beta=6;
+opt.lambda=3;
 %%  parsing options
 if numel(varargin)
     for i = 1:2:numel(varargin)
